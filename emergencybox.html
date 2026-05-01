@@ -33,7 +33,38 @@ footer{margin-top:16px;display:flex;justify-content:space-between;align-items:ce
 .running-text span{display:inline-block;padding-left:100%;color:#ff3333;font-weight:700;animation:marquee 12s linear infinite;letter-spacing:1px}
 @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
 #progressBarContainer{width:100%;background:rgba(255,255,255,0.05);height:10px;border-radius:20px;overflow:hidden;margin-top:14px;display:none}
-#progressBar{height:100%;width:0%;background:#00ff00;transition:0.3s}
+#progressBar{height:100%;width:0%;background:#00ff00;transition:0.3s}  
+.code-private {
+  color: #ff0000; !important;
+  font-weight: bold;
+  animation: blinkFast 0.5s infinite;
+  -webkit-animation: blinkFast 0.5s infinite;
+}
+
+@keyframes blinkFast {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+  @-webkit-keyframes blinkFast {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+  .bottom-right {
+  position: fixed;
+  right: 100px;
+  bottom: 110px;
+  color: #00ff00;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  animation: blinkFast 0.8s infinite;
+  text-shadow: 0 0 5px red;
+  opacity: 0.9;
+  z-index: 9999; /* 🔥 INI YANG KURANG */
+}
+  body {
+  position: relative;
+}
 </style>
 </head>
 <body>
@@ -46,11 +77,13 @@ footer{margin-top:16px;display:flex;justify-content:space-between;align-items:ce
     </div>
 
     <header>
-      <div class="logo"><b>UP</b></div>
+      <div class="logo"><b style="color:#ffff00;">ISU</b></div>
       <div>
-        <h2 style="color:#00ff00; margin:4px 0 0 0; font-weight:600;">INTEGRATION SYSTEM UPLOAD</h2>
+        <h2 style="color:#00ff00; margin:4px 0 0 0; font-weight:600;">INTEGRATED SISTEM UPLOAD</h2>
         <h1>EMERGENCY BOX PUSLAT KODIKLATAU</h1>        
-        <p class="small">code : _PRIVATE</p>
+        <p style="font-size:12px;color:#ffff00">
+        DATE/TIME : <span class="code-private" id="tanggal"></span>
+        </p>
       </div>
    </header>
 
@@ -94,7 +127,7 @@ footer{margin-top:16px;display:flex;justify-content:space-between;align-items:ce
 </div>
 
 <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwf6Qql5RFosk6HUyIkwtPSOZquwi0z64rLZagKkheF-s39PTkmcyKls15YwSM86WS6QQ/exec"; // ganti
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzb60Ct6mliG1KKl67Bn7Xl4osf1iJLV_k8dBgN7dLgmICAEDah2IG9E-nCZdyLBgc0Mg/exec"; // ganti
 
 let files = [];
 const drop = document.getElementById("drop");
@@ -113,7 +146,6 @@ function renderList(){
     li.className = "file-item";
     li.innerHTML = `<div>${f.name} <div class="small">${(f.size/1024).toFixed(1)} KB</div></div>
                     <button class="btn" onclick="removeFile(${i})">Hapus</button>`;
-    
     fileList.appendChild(li);
   });
   count.textContent = files.length + " file";
@@ -185,28 +217,56 @@ document.addEventListener("click", function() {
   forceFullscreen();
 }, { once: true });
 </script>
-<script>
-const API = "https://script.google.com/macros/s/AKfycbwtQdG1uad94FIYz9molQyBLSYOChvWn89fjWvSbf-CON9YrFHyBEUvG0oZ0dVnwSc5/exec";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyC7SkdwajJl6pzXehN6zpeycNfT5ZHFXP4",
+  authDomain: "portalmonitoring-a0926.firebaseapp.com",
+  databaseURL: "https://portalmonitoring-a0926-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "portalmonitoring-a0926",
+  storageBucket: "portalmonitoring-a0926.appspot.com",
+  messagingSenderId: "27756738323",
+  appId: "1:27756738323:web:010277cc1eb9b7cdfa97cd"
+};
 
-fetch(API + "?action=fileCount")
-  .then(r => r.text())
-  .then(count => {
-    localStorage.setItem("emergency_last_seen", count.trim());
-  });
-</script>
-// ===== EMERGENCYBOX.HTML: hentikan alarm saat file diklik =====
-document.querySelectorAll(".new-file").forEach(fileBtn => {
-    fileBtn.addEventListener("click", () => {
-        // update localStorage supaya alarm di database.html mati
-        localStorage.setItem("emergency_last_seen", Date.now());
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-        // opsional: feedback user
-        alert("✔ Alarm untuk file ini telah dihentikan!");
+function heartbeat(){
+    set(ref(db, "pages/BT5Python/p120G412"), {
+        lastSeen: Date.now()
     });
-});
+}
 
+setInterval(heartbeat, 2000);
+</script>
+  <script>
+function tampilkanTanggal() {
+  const now = new Date();
+
+  const hari = String(now.getDate()).padStart(2, '0');
+  const bulan = String(now.getMonth() + 1).padStart(2, '0');
+  const tahun = now.getFullYear();
+
+  const jam = String(now.getHours()).padStart(2, '0');
+  const menit = String(now.getMinutes()).padStart(2, '0');
+  const detik = String(now.getSeconds()).padStart(2, '0');
+
+  const format = `${hari}-${bulan}-${tahun} ${jam}:${menit}:${detik}`;
+
+  document.getElementById("tanggal").textContent = format;
+}
+
+// update tiap detik biar live
+setInterval(tampilkanTanggal, 1000);
+tampilkanTanggal();
+</script>
 </body>
 </html>
+
+
+
 
 
 
