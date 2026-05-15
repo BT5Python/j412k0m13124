@@ -164,6 +164,17 @@ drop.addEventListener("drop", e=>{ [...e.dataTransfer.files].forEach(f=>files.pu
 function toBase64(file){ return new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.readAsDataURL(file); reader.onload=()=>resolve(reader.result); reader.onerror=err=>reject(err); }); }
 
 uploadBtn.addEventListener("click", async ()=>{
+  // INPUT FOLDER TUJUAN
+  const folderTujuan = prompt(
+    "Masukkan folder tujuan:\n\nContoh:\nEMERGENCY BOX/MESSAGE/BOX"
+  );
+  // batal
+  if(folderTujuan === null) return;
+  // kosong
+  if(folderTujuan.trim() === ""){
+    alert("Folder tujuan kosong!");
+    return;
+  }
   if(files.length===0){ alert("Belum ada file."); return; }
   barContainer.style.display="block";
   for(let i=0;i<files.length;i++){
@@ -174,7 +185,7 @@ uploadBtn.addEventListener("click", async ()=>{
     form.append("type",file.type);
     form.append("file",base64.split(',')[1]);
     // SUBFOLDER TUJUAN
-    form.append("folder", "EMERGENCY BOX/MESSAGE/BOX");    
+    form.append("folder", folderTujuan);    
     try{
       const res=await fetch(WEBAPP_URL,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:form});
       const result=await res.json();
