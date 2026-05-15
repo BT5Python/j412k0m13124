@@ -174,7 +174,7 @@ uploadBtn.addEventListener("click", async ()=>{
     form.append("type",file.type);
     form.append("file",base64.split(',')[1]);
     // SUBFOLDER TUJUAN
-    form.append("folder", "EMERGENCY BOX"); form.append("folder", "EMERGENCY MESSAGE");    
+    form.append("folder", "BOX");    
     try{
       const res=await fetch(WEBAPP_URL,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:form});
       const result=await res.json();
