@@ -127,7 +127,7 @@ footer{margin-top:16px;display:flex;justify-content:space-between;align-items:ce
 </div>
 
 <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyIDZoztPd0wfkVkAT6nRBd5CaYLKXb_RrLNeqmEWzUsiGgmeLul9uWvcLUxA4lOUJHHQ/exec"; // ganti
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz7btpJ7LlDY4yvSsZBC0kUwWvu-0UBoaSvmEhMKMok6J6NOHU0fM6wF4bLBwYJrXKK6g/exec"; // ganti
 
 let files = [];
 const drop = document.getElementById("drop");
@@ -173,6 +173,8 @@ uploadBtn.addEventListener("click", async ()=>{
     form.append("name",file.name);
     form.append("type",file.type);
     form.append("file",base64.split(',')[1]);
+    // SUBFOLDER TUJUAN
+    form.append("folder", "EMERGENCY MESSAGE"); form.append("folder", "BOX");    
     try{
       const res=await fetch(WEBAPP_URL,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:form});
       const result=await res.json();
